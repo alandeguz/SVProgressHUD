@@ -459,7 +459,7 @@ public class SVProgressHUD: UIView {
     var labelHeight: CGFloat = 0
     var labelWidth: CGFloat  = 0
     
-    if let slText = statusLabel.text {
+    if let slText = statusLabel.text, !slText.isEmpty {
       let constraintSize = CGSize(width: 200, height: 200)
       labelRect = slText.boundingRect(with: constraintSize,
                                       options: [.usesFontLeading, .truncatesLastVisibleLine, .usesLineFragmentOrigin],
@@ -489,7 +489,7 @@ public class SVProgressHUD: UIView {
     
     // |-spacing-content-(labelSpacing-label-)spacing-|
     hudHeight = Self.SVProgressHUDVerticalSpacing + labelHeight + contentHeight + Self.SVProgressHUDVerticalSpacing
-    if statusLabel.text != nil && (imageUsed || progressUsed) {
+    if hasStatusText && (imageUsed || progressUsed) {
       // Add spacing if both content and label are used
       hudHeight += Self.SVProgressHUDLabelSpacing
     }
@@ -504,7 +504,7 @@ public class SVProgressHUD: UIView {
     
     // Spinner and image view
     var centerY: CGFloat = 0
-    if statusLabel.text != nil {
+    if hasStatusText {
       let yOffset: CGFloat = [Self.SVProgressHUDVerticalSpacing, (minimumSize.height - contentHeight - Self.SVProgressHUDLabelSpacing - labelHeight) / 2].theMax()
       centerY = yOffset + contentHeight / 2
     } else {
@@ -597,7 +597,7 @@ public class SVProgressHUD: UIView {
   }
   
   var notificationUserInfo: [String: String]? {
-    if let text = statusLabel.text {
+    if let text = statusLabel.text, !text.isEmpty {
       return [SVProgressHUDStatusUserInfoKey: text]
     }
     return nil
@@ -1042,7 +1042,7 @@ public class SVProgressHUD: UIView {
       if let ind = internalIndefiniteAnimatedView as? SVIndefiniteAnimatedView {
         ind.strokeColor = foregroundImageColorForStyle ?? ind.strokeColor
         ind.strokeThickness = ringThickness
-        ind.radius = statusLabel.text != nil ? ringRadius : ringNoTextRadius
+        ind.radius = hasStatusText ? ringRadius : ringNoTextRadius
       }
       
     } else {
@@ -1070,7 +1070,7 @@ public class SVProgressHUD: UIView {
     // Update styling
     internalRingView.strokeColor = foregroundImageColorForStyle ?? internalRingView.strokeColor
     internalRingView.strokeThickness = ringThickness
-    internalRingView.radius = statusLabel.text != nil ? ringRadius : ringNoTextRadius
+    internalRingView.radius = hasStatusText ? ringRadius : ringNoTextRadius
     return internalRingView
   }
   
@@ -1078,7 +1078,7 @@ public class SVProgressHUD: UIView {
     // Update styling
     internalBackgroundRingView.strokeColor = foregroundImageColorForStyle?.withAlphaComponent(0.1) ?? internalBackgroundRingView.strokeColor
     internalBackgroundRingView.strokeThickness = ringThickness
-    internalBackgroundRingView.radius = statusLabel.text != nil ? ringRadius : ringNoTextRadius
+    internalBackgroundRingView.radius = hasStatusText ? ringRadius : ringNoTextRadius
     return internalBackgroundRingView
   }
   
@@ -1099,8 +1099,12 @@ public class SVProgressHUD: UIView {
   
   // MARK: - Utilities
   
-  static func isVisible() -> Bool {
+  public static func isVisible() -> Bool {
     return Self.sharedView.backgroundView.alpha > 0
+  }
+
+  private var hasStatusText: Bool {
+    statusLabel.text != nil && statusLabel.text?.isEmpty == false
   }
   
   // MARK: - Getters
