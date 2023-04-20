@@ -454,7 +454,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     CGFloat labelHeight = 0.0f;
     CGFloat labelWidth = 0.0f;
     
-    if(self.statusLabel.text) {
+    if(self.hasStatusText) {
         CGSize constraintSize = CGSizeMake(200.0f, 300.0f);
         labelRect = [self.statusLabel.text boundingRectWithSize:constraintSize
                                                         options:(NSStringDrawingOptions)(NSStringDrawingUsesFontLeading | NSStringDrawingTruncatesLastVisibleLine | NSStringDrawingUsesLineFragmentOrigin)
@@ -483,7 +483,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     
     // |-spacing-content-(labelSpacing-label-)spacing-|
     hudHeight = SVProgressHUDVerticalSpacing + labelHeight + contentHeight + SVProgressHUDVerticalSpacing;
-    if(self.statusLabel.text && (imageUsed || progressUsed)){
+    if(self.hasStatusText && (imageUsed || progressUsed)){
         // Add spacing if both content and label are used
         hudHeight += SVProgressHUDLabelSpacing;
     }
@@ -497,7 +497,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     
     // Spinner and image view
     CGFloat centerY;
-    if(self.statusLabel.text) {
+    if(self.hasStatusText) {
         CGFloat yOffset = MAX(SVProgressHUDVerticalSpacing, (self.minimumSize.height - contentHeight - SVProgressHUDLabelSpacing - labelHeight) / 2.0f);
         centerY = yOffset + contentHeight / 2.0f;
     } else {
@@ -637,7 +637,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 }
 
 - (NSDictionary*)notificationUserInfo {
-    return (self.statusLabel.text ? @{SVProgressHUDStatusUserInfoKey : self.statusLabel.text} : nil);
+    return (self.hasStatusText ? @{SVProgressHUDStatusUserInfoKey : self.statusLabel.text} : nil);
 }
 
 - (void)positionHUD:(NSNotification*)notification {
@@ -1093,7 +1093,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
         SVIndefiniteAnimatedView *indefiniteAnimatedView = (SVIndefiniteAnimatedView*)_indefiniteAnimatedView;
         indefiniteAnimatedView.strokeColor = self.foregroundImageColorForStyle;
         indefiniteAnimatedView.strokeThickness = self.ringThickness;
-        indefiniteAnimatedView.radius = self.statusLabel.text ? self.ringRadius : self.ringNoTextRadius;
+        indefiniteAnimatedView.radius = self.hasStatusText ? self.ringRadius : self.ringNoTextRadius;
     } else {
         // Check if spinner exists and is an object of different class
         if(_indefiniteAnimatedView && ![_indefiniteAnimatedView isKindOfClass:[UIActivityIndicatorView class]]){
@@ -1122,7 +1122,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     // Update styling
     _ringView.strokeColor = self.foregroundImageColorForStyle;
     _ringView.strokeThickness = self.ringThickness;
-    _ringView.radius = self.statusLabel.text ? self.ringRadius : self.ringNoTextRadius;
+    _ringView.radius = self.hasStatusText ? self.ringRadius : self.ringNoTextRadius;
     
     return _ringView;
 }
@@ -1136,7 +1136,7 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
     // Update styling
     _backgroundRingView.strokeColor = [self.foregroundImageColorForStyle colorWithAlphaComponent:0.1f];
     _backgroundRingView.strokeThickness = self.ringThickness;
-    _backgroundRingView.radius = self.statusLabel.text ? self.ringRadius : self.ringNoTextRadius;
+    _backgroundRingView.radius = self.hasStatusText ? self.ringRadius : self.ringNoTextRadius;
     
     return _backgroundRingView;
 }
@@ -1171,6 +1171,11 @@ static const CGFloat SVProgressHUDLabelSpacing = 8.0f;
 + (BOOL)isVisible {
     // Checking one alpha value is sufficient as they are all the same
     return [self sharedView].backgroundView.alpha > 0.0f;
+}
+
+- (BOOL)hasStatusText {
+  // Checking one alpha value is sufficient as they are all the same
+  return self.statusLabel.text != nil && self.statusLabel.text.length > 0;
 }
 
 

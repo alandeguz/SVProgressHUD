@@ -149,6 +149,8 @@ typedef void (^SVProgressHUDDismissCompletion)(void);
 
 + (BOOL)isVisible;
 
+- (BOOL)hasStatusText;
+
 + (NSTimeInterval)displayDurationForString:(nullable NSString*)string;
 
 + (NSBundle* _Nullable)imageBundle;
